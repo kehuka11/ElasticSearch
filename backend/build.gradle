@@ -1,0 +1,71 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.14'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.elasticsearch'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '11'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+//	implementation 'org.flywaydb:flyway-core'
+//	implementation 'org.flywaydb:flyway-mysql'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.3.1'
+	implementation("javax.validation:validation-api:2.0.1.Final")
+	implementation("org.mybatis.spring.boot:mybatis-spring-boot:2.1.4")
+	implementation("org.mybatis:mybatis:3.5.13")
+	implementation 'org.mybatis.generator:mybatis-generator-core:1.4.0'
+	implementation 'jakarta.json:jakarta.json-api:2.0.0'
+	runtimeOnly 'org.glassfish:jakarta.json:2.0.0'
+
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+task runup(type: Exec) {
+	commandLine "docker-compose", "up", "-d"
+}
+
+task rundown(type: Exec) {
+	commandLine "docker-compose", "down"
+}
+
+
+task createDb(type: Exec) {
+	def query = "CREATE DATABASE  ${db_name};"
+
+	commandLine "docker", "exec", "-i", "backend-mysql", "mysql", "-uroot", "-pPassword123", "-e", "$query"
+}
+
+
+task generateMyBatis(type: JavaExec) {
+	main = 'org.mybatis.generator.api.ShellRunner'
+	classpath = sourceSets.main.runtimeClasspath
+	args('-configfile', 'src/main/resources/generatorConfig.xml', '-overwrite')
+}

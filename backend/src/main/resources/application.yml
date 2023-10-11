@@ -1,0 +1,21 @@
+####spring####
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test
+    username: root
+    password: Password123
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      leakDetectionThreshold: 60000
+      maximumPoolSize: 10
+      minimumIdle: 5
+  data:
+    elasticsearch:
+      cluster-name: docker-cluster
+      cluster-nodes: localhost:9200
+
+
+mybatis:
+  type-aliases-package: com.elasticsearch.demo.repository.model
+  mapper-locations: classpath:mappers/*.xml
